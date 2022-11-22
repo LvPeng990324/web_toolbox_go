@@ -17,6 +17,9 @@ func createMyRender() multitemplate.Renderer {
 }
 
 func main() {
+	gin.SetMode(gin.DebugMode)
+	// gin.SetMode(gin.ReleaseMode)
+
 	router := gin.Default()
 	router.HTMLRender = createMyRender()
 	// 首页
