@@ -23,7 +23,7 @@ func main() {
 	router := gin.Default()
 	router.HTMLRender = createMyRender()
 	// 首页
-	router.GET("/index", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		c.HTML(200, "index", gin.H{
 			
 		})
