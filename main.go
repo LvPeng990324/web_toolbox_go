@@ -13,6 +13,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("text_encode_decode", "templates/base.html", "templates/text_encode_decode.html")
 	r.AddFromFiles("stitch_picture", "templates/base.html", "templates/stitch_picture.html")
 	r.AddFromFiles("compress_picture", "templates/base.html", "templates/compress_picture.html")
+	r.AddFromFiles("json_format", "templates/base.html", "templates/json_format.html")
 	return r
 }
 
@@ -24,27 +25,23 @@ func main() {
 	router.HTMLRender = createMyRender()
 	// 首页
 	router.GET("/", func(c *gin.Context) {
-		c.HTML(200, "index", gin.H{
-			
-		})
+		c.HTML(200, "index", gin.H{})
 	})
 	// 文本加解密
 	router.GET("/text-encode-decode", func(c *gin.Context) {
-		c.HTML(200, "text_encode_decode", gin.H{
-
-		})
+		c.HTML(200, "text_encode_decode", gin.H{})
 	})
 	// 图片拼接
 	router.GET("/stitch-picture", func(c *gin.Context) {
-		c.HTML(200, "stitch_picture", gin.H{
-
-		})
+		c.HTML(200, "stitch_picture", gin.H{})
 	})
 	// 图片压缩
 	router.GET("/compress-picture", func(c *gin.Context) {
-		c.HTML(200, "compress_picture", gin.H{
-
-		})
+		c.HTML(200, "compress_picture", gin.H{})
+	})
+	// JSON格式化
+	router.GET("/json-format", func(c *gin.Context) {
+		c.HTML(200, "json_format", gin.H{})
 	})
 
 	if err := router.Run(":8080"); err != nil {

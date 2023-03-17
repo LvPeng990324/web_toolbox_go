@@ -1,0 +1,59 @@
+{{ define "json_format_active" }}active{{ end }}
+{{ define "title_name" }}JSON格式化{{ end }}
+{{ define "page_name" }}JSON格式化{{ end }}
+
+{{ define "css_content" }}
+<link href="https://cdn.bootcdn.net/ajax/libs/jsoneditor/9.10.0/jsoneditor.min.css" rel="stylesheet">
+<style type="text/css">
+  #jsoneditor {
+    width: 100%;
+    height: 750px;
+  }
+
+  body, html {
+    font-family: "DejaVu Sans", sans-serif;
+  }
+
+  p, li {
+    width: 500px;
+    font-size: 10.5pt;
+  }
+
+  code {
+    background: #f5f5f5;
+  }
+</style>
+{{ end }}
+
+{{ define "main_content" }}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div id="jsoneditor"></div>
+      </div>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "js_content" }}
+<script src="https://cdn.bootcdn.net/ajax/libs/ace/1.15.3/ace.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jsoneditor/9.10.0/jsoneditor.min.js"></script>
+<script>
+  // create the editor
+  const container = document.getElementById('jsoneditor')
+  const options = {
+    modes: ['code', 'form', 'text', 'tree', 'view', 'preview'],
+    mode: 'code',
+    ace: ace
+  }
+  const json = {
+    'array': [1, 2, 3],
+    'boolean': true,
+    'null': null,
+    'number': 123,
+    'object': {'a': 'b', 'c': 'd'},
+    'string': 'Hello World'
+  }
+  const editor = new JSONEditor(container, options, json)
+</script>
+{{ end }}
