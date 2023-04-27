@@ -15,6 +15,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("stitch_picture", "templates/base.html", "templates/stitch_picture.html")
 	r.AddFromFiles("compress_picture", "templates/base.html", "templates/compress_picture.html")
 	r.AddFromFiles("json_format", "templates/base.html", "templates/json_format.html")
+	r.AddFromFiles("timestamp_covert", "templates/base.html", "templates/timestamp_covert.html")
 	return r
 }
 
@@ -54,6 +55,10 @@ func main() {
 	// JSON格式化
 	router.GET("/json-format", func(c *gin.Context) {
 		c.HTML(200, "json_format", gin.H{})
+	})
+	// 时间戳转换
+	router.GET("/timestamp-covert", func(c *gin.Context) {
+		c.HTML(200, "timestamp_covert", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {

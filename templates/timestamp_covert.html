@@ -1,0 +1,82 @@
+{{ define "timestamp_covert_active" }}active{{ end }}
+{{ define "title_name" }}时间戳转换{{ end }}
+{{ define "page_name" }}时间戳转换{{ end }}
+
+{{ define "main_content" }}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="form-group">
+            <input id="id_timestamp_input" type="text" class="form-control" placeholder="时间戳">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-block btn-primary" onclick="timestamp_2_time()">转为时间 ></button>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-group">
+            <input id="id_time_output" type="text" class="form-control" placeholder="时间">
+          </div>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-sm-5">
+          <div class="form-group">
+            <input id="id_time_input" type="text" class="form-control" placeholder="时间">
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <button type="button" class="btn btn-block btn-primary" onclick="time_2_timestamp()">转为时间戳 ></button>
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-group">
+            <input id="id_timestamp_output" type="text" class="form-control" placeholder="时间戳">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+// 时间戳转为时间
+function timestamp_2_time() {
+  let timestamp = $('#id_timestamp_input').val();
+  // 如果是秒级要转为毫秒级
+  if (timestamp.length == 10) {
+    timestamp += '000';
+  }
+  timestamp = parseInt(timestamp);
+
+  let date = new Date(timestamp);
+  let Y = date.getFullYear() + '-';
+  let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+  let D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
+  let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':';
+  let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
+  let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
+
+  let time_str = Y + M + D + h + m + s;
+
+  // 写到output里
+  $('#id_time_output').val(time_str);
+}
+
+// 时间转为时间戳
+function time_2_timestamp() {
+  let time_str = $('#id_time_input').val();
+  let timestamp = Date.parse(new Date(time_str).toString());
+  // 写到output里
+  $('#id_timestamp_output').val(timestamp);
+}
+</script>
+{{ end }}
