@@ -51,6 +51,15 @@
 // 时间戳转为时间
 function timestamp_2_time() {
   let timestamp = $('#id_timestamp_input').val();
+  
+  let time_str = get_time_from_timestamp(timestamp);
+
+  // 写到output里
+  $('#id_time_output').val(time_str);
+}
+
+// 时间戳转时间的工具方法
+function get_time_from_timestamp(timestamp) {
   // 如果是秒级要转为毫秒级
   if (timestamp.length == 10) {
     timestamp += '000';
@@ -65,10 +74,7 @@ function timestamp_2_time() {
   let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':';
   let s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds();
 
-  let time_str = Y + M + D + h + m + s;
-
-  // 写到output里
-  $('#id_time_output').val(time_str);
+  return Y + M + D + h + m + s;
 }
 
 // 时间转为时间戳
@@ -78,5 +84,15 @@ function time_2_timestamp() {
   // 写到output里
   $('#id_timestamp_output').val(timestamp);
 }
+
+// 进入页面时候预填入当前的时间戳和时间
+function init_page() {
+  let timestamp = (new Date()).getTime();
+  let time_str = get_time_from_timestamp(timestamp);
+  // 预填充
+  $('#id_timestamp_input').val(timestamp);
+  $('#id_time_input').val(time_str);
+}
+init_page();
 </script>
 {{ end }}
