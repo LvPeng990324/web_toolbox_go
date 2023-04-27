@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/gin-contrib/multitemplate"
@@ -18,6 +19,11 @@ func createMyRender() multitemplate.Renderer {
 }
 
 func main() {
+	// 获取参数
+	var port string
+	flag.StringVar(&port, "port", "8080", "server listen port")
+	flag.Parse()
+
 	gin.SetMode(gin.DebugMode)
 	// gin.SetMode(gin.ReleaseMode)
 
@@ -44,7 +50,7 @@ func main() {
 		c.HTML(200, "json_format", gin.H{})
 	})
 
-	if err := router.Run(":8080"); err != nil {
+	if err := router.Run(":" + port); err != nil {
 		log.Fatal(err)
 	}
 }
