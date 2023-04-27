@@ -21,11 +21,17 @@ func createMyRender() multitemplate.Renderer {
 func main() {
 	// 获取参数
 	var port string
+	var debug_flag bool
 	flag.StringVar(&port, "port", "8080", "server listen port")
+	flag.BoolVar(&debug_flag, "debug", true, "set debug or not")
 	flag.Parse()
 
-	gin.SetMode(gin.DebugMode)
-	// gin.SetMode(gin.ReleaseMode)
+	// 设置启动模式
+	if debug_flag {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
 
 	router := gin.Default()
 	router.HTMLRender = createMyRender()
