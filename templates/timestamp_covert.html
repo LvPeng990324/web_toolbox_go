@@ -5,6 +5,12 @@
 {{ define "main_content" }}
   <div class="content">
     <div class="container-fluid">
+      <div id="id_current_timestamp_div" class="row">
+        点击复制当前时间戳：<p id="id_current_timestamp_p"></p>
+      </div>
+
+      <hr>
+
       <div class="row">
         <div class="col-sm-5">
           <div class="form-group">
@@ -84,6 +90,32 @@ function time_2_timestamp() {
   // 写到output里
   $('#id_timestamp_output').val(timestamp);
 }
+
+// 点击复制当前时间
+$('#id_current_timestamp_div').click(function () {
+  let timestamp = $('#id_current_timestamp_p').text();
+  copy_text(timestamp);
+})
+
+// 复制文本
+function copy_text(text) {
+  let o_input = document.createElement('input');
+  o_input.value = text;
+  document.body.appendChild(o_input);
+  o_input.select();  // 选择对象
+  document.execCommand('copy');  // 执行浏览器复制命令
+  o_input.className = 'o_input'
+  o_input.style.display = 'none';
+}
+
+// 填充当前时间，每秒执行
+function give_current_timestamp() {
+  let timestamp = (new Date()).getTime();
+  $('#id_current_timestamp_p').text(timestamp);
+
+  setTimeout(give_current_timestamp, 1000);
+}
+give_current_timestamp();
 
 // 进入页面时候预填入当前的时间戳和时间
 function init_page() {
