@@ -1,11 +1,11 @@
 package main
 
 import (
-	"flag"
 	"log"
 
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func createMyRender() multitemplate.Renderer {
@@ -20,12 +20,16 @@ func createMyRender() multitemplate.Renderer {
 }
 
 func main() {
-	// 获取参数
-	var port string
-	var debug_flag bool
-	flag.StringVar(&port, "port", "8080", "server listen port")
-	flag.BoolVar(&debug_flag, "debug", true, "set debug or not")
-	flag.Parse()
+	// 获取配置
+	viper.SetConfigName("conf")
+	viper.SetConfigType("ini")
+	viper.AddConfigPath(".")
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	port := viper.GetString("system.port")
+	debug_flag := viper.GetBool("system.debug")
 
 	// 设置启动模式
 	if debug_flag {
