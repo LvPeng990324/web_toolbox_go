@@ -1,0 +1,70 @@
+{{ define "chatgpt_active" }}active{{ end }}
+{{ define "title_name" }}ChatGPT{{ end }}
+{{ define "page_name" }}ChatGPT{{ end }}
+
+{{ define "main_content" }}
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="form-group">
+            <textarea id="id_ask_textarea" class="form-control" rows="3" placeholder="输入文本 ..."></textarea>
+          </div>
+        </div>
+
+        <div class="col-sm-12">
+          <div class="form-group">
+            <button id="id_ask_button" type="button" class="btn btn-block btn-primary" onclick="ask()">问 ></button>
+          </div>
+        </div>
+        
+        <div class="col-sm-12">
+          <div class="form-group">
+            <textarea id="id_answer_textarea" class="form-control" rows="5" placeholder="回答 ..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+// 问
+function ask() {
+  // 先把按钮设置为禁用
+  let button_attr = $('#id_ask_button');
+  button_attr.prop('disabled', 'disabled');
+  button_attr.text('等待结果...');
+
+  let ask_content = $('#id_ask_textarea').val();
+  $.ajax({
+    type: "POST",
+    url: "/chatgpt/ask",
+    headers: {
+      "req_token": get_req_token(),
+    },
+    data: {
+      ask_content: ask_content,
+    },
+    success: function (res) {
+      let raw_res = res.res;
+      let json_res = JSON.parse(raw_res);
+      let answer = json_res.choices[0].message.content;
+      $('#id_answer_textarea').val(answer);
+      
+      // 按钮恢复
+      button_attr.prop('disabled', '');
+      button_attr.text('问 >');
+    }
+  })
+}
+
+// 获取req_token
+// 就先简单的秒级时间戳乘以2吧
+function get_req_token() {
+  let timestamp = Math.floor(((new Date()).getTime()) / 1000) * 2;
+  return timestamp;
+}
+</script>
+{{ end }}

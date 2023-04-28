@@ -1,7 +1,12 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gin-contrib/multitemplate"
 	"github.com/gin-gonic/gin"
@@ -16,6 +21,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("compress_picture", "templates/base.html", "templates/compress_picture.html")
 	r.AddFromFiles("json_format", "templates/base.html", "templates/json_format.html")
 	r.AddFromFiles("timestamp_covert", "templates/base.html", "templates/timestamp_covert.html")
+	r.AddFromFiles("chatgpt", "templates/base.html", "templates/chatgpt.html")
 	return r
 }
 
@@ -30,6 +36,8 @@ func main() {
 	}
 	port := viper.GetString("system.port")
 	debug_flag := viper.GetBool("system.debug")
+	chatgpt_server_url := viper.GetString("chatgpt.server_url")
+	chatgpt_api_key := viper.GetString("chatgpt.api_key")
 
 	// 设置启动模式
 	if debug_flag {
@@ -64,8 +72,51 @@ func main() {
 	router.GET("/timestamp-covert", func(c *gin.Context) {
 		c.HTML(200, "timestamp_covert", gin.H{})
 	})
+	// ChatGPT
+	router.GET("/chatgpt", func(c *gin.Context) {
+		c.HTML(200, "chatgpt", gin.H{})
+	})
+
+	// 获取ChatGPT回答
+	router.POST("/chatgpt/ask", func(c *gin.Context) {
+		check_res := check_req_valid(c)
+		if !check_res { // 验证不过
+			c.JSON(403, gin.H{"err": "permission denied!"})
+			return
+		}
+
+		ask_content := c.PostForm("ask_content")
+		url := chatgpt_server_url
+		payload := strings.NewReader("{\"api_key\": \"" + chatgpt_api_key + "\", \"ask_content\": \"" + ask_content + "\"}")
+		req, _ := http.NewRequest("POST", url, payload)
+		req.Header.Add("Content-Type", "application/json")
+		response, err := http.DefaultClient.Do(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// 解析body
+		body, _ := ioutil.ReadAll(response.Body)
+		body_str := string(body)
+
+		c.JSON(200, gin.H{
+			"res": body_str,
+		})
+	})
 
 	if err := router.Run(":" + port); err != nil {
 		log.Fatal(err)
 	}
+}
+
+// 验证请求合法性，就先简单的秒级时间戳乘以2吧
+func check_req_valid(c *gin.Context) bool {
+	// 获取参数里带的
+	token := c.GetHeader("req_token")
+	token_int, _ := strconv.Atoi(token)
+	token_timestamp := token_int / 2
+
+	timestamp := int(time.Now().Unix())
+
+	// 给5s的时间容错
+	return timestamp-token_timestamp <= 5
 }
