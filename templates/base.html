@@ -21,7 +21,7 @@
   {{ block "css_content" .}}
   {{ end }}
 </head>
-<body class="hold-transition sidebar-mini">
+<body id="id_body" class="hold-transition sidebar-mini">
 <div class="wrapper">
 
   <!-- Navbar -->
@@ -30,6 +30,12 @@
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+    </ul>
+    <!-- Right navbar links -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <button id="id_mode_switch_button" class="btn btn-default" onclick="switch_theme()">切换主题</button>
       </li>
     </ul>
   </nav>
@@ -181,6 +187,40 @@
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.bundle.min.js"></script>
 <!-- AdminLTE App -->
 <script src="https://cdn.bootcdn.net/ajax/libs/admin-lte/3.2.0/js/adminlte.min.js"></script>
+<script>
+// 切换主题
+function switch_theme() {
+  let button_attr = $('#id_mode_switch_button');
+  let body_attr = $('#id_body');
+  // 获取本地缓存的暗黑模式标记
+  let is_dark_mode = window.localStorage.getItem("is_dark_mode");
+  if (!is_dark_mode) {
+    // 缓存标记
+    window.localStorage.setItem("is_dark_mode", "true");
+  } else {
+    // 删除标记
+    window.localStorage.removeItem("is_dark_mode");
+  }
+  // 应用更改
+  refresh_theme();
+}
+// 更新主题
+function refresh_theme() {
+  let body_attr = $('#id_body');
+  // 获取本地缓存标记
+  let is_dark_mode = window.localStorage.getItem("is_dark_mode");
+  if (is_dark_mode) {
+    // 切换为暗黑模式
+    body_attr.prop("class", "hold-transition sidebar-mini");
+  } else {
+    // 切换为明亮模式
+    body_attr.prop("class", "hold-transition sidebar-mini dark-mode");
+  }
+}
+refresh_theme();
+
+</script>
+
 <!-- 自定义js -->
 {{ block "js_content" .}}
 {{ end }}
