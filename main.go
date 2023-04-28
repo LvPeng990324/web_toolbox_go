@@ -99,7 +99,7 @@ func main() {
 		body_str := string(body)
 
 		// 打个日志，记录下都问了啥
-		log.Fatal("chatgpt, ask: " + ask_content + " answer: " + body_str)
+		log.Printf("chatgpt, ask: " + ask_content + " answer: " + body_str)
 
 		c.JSON(200, gin.H{
 			"res": body_str,
