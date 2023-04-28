@@ -11,19 +11,25 @@
             <textarea id="id_textarea" class="form-control" rows="3" placeholder="输入文本 ..."></textarea>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <div class="form-group">
             <button type="button" class="btn btn-block btn-primary btn-lg" onclick="url_encoder()">URL加密</button>
             <button type="button" class="btn btn-block btn-success btn-lg" onclick="url_decoder()">URL解密</button>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
           <div class="form-group">
             <button type="button" class="btn btn-block btn-primary btn-lg" onclick="base64_encoder()">Base64加密</button>
             <button type="button" class="btn btn-block btn-success btn-lg" onclick="base64_decoder()">Base64解密</button>
           </div>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
+          <div class="form-group">
+            <button type="button" class="btn btn-block btn-primary btn-lg" onclick="unicode_encoder()">Unicode编码</button>
+            <button type="button" class="btn btn-block btn-primary btn-lg" onclick="unicode_decoder()">Unicode解码</button>
+          </div>
+        </div>
+        <div class="col-sm-3">
           <div class="form-group">
             <button type="button" class="btn btn-block btn-primary btn-lg" onclick="md5_encode()">MD5加密</button>
             <button type="button" class="btn btn-block btn-success btn-lg" disabled>MD5无法解密</button>
@@ -41,7 +47,6 @@
 function url_encoder() {
     let attr = document.getElementById('id_textarea')
     let text = attr.value;  // 获取原始文本
-    console.log(text)
     attr.value = encodeURIComponent(text);  // 将文本框内容替换为加密后的字符
 }
 
@@ -49,7 +54,6 @@ function url_encoder() {
 function url_decoder() {
     let attr = document.getElementById('id_textarea')
     let text = attr.value;  // 获取原始文本
-    console.log(text)
     attr.value = decodeURIComponent(text);  // 将文本框内容替换为解密后的字符
 }
 
@@ -57,7 +61,6 @@ function url_decoder() {
 function base64_encoder() {
     let attr = document.getElementById('id_textarea')
     let text = attr.value;  // 获取原始文本
-    console.log(text)
     attr.value = btoa(encodeURIComponent(text));  // 将文本框内容替换为加密后的字符
 }
 
@@ -65,15 +68,38 @@ function base64_encoder() {
 function base64_decoder() {
     let attr = document.getElementById('id_textarea')
     let text = attr.value;  // 获取原始文本
-    console.log(text)
     attr.value = decodeURIComponent(atob(text));  // 将文本框内容替换为解密后的字符
+}
+
+// Unicode编码
+function unicode_encoder() {
+  let attr = document.getElementById('id_textarea');
+  let text = attr.value;  // 获取原始文本
+  // 编码
+  let unicode_str = '';
+  for (let i = 0; i < text.length; i++) {
+    unicode_str += "\\u" + text.charCodeAt(i).toString(16);
+  }
+  attr.value = unicode_str;  // 将文本框内容替换为编码后的字符
+}
+
+// Unicode解码
+function unicode_decoder() {
+  let attr = document.getElementById('id_textarea');
+  let text = attr.value;  // 获取原始文本
+  // 解码
+  let str = '';
+  let unicode_arr = text.split("\\u");
+  for (let i = 0; i < unicode_arr.length; i++) {
+    str += String.fromCharCode(parseInt(unicode_arr[i], 16));
+  }
+  attr.value = str;  // 将文本框内容替换为解码后的字符
 }
 
 // MD5加密
 function md5_encode() {
     let attr = document.getElementById('id_textarea')
     let text = attr.value;  // 获取原始文本
-    console.log(text)
     attr.value = SparkMD5.hash(text);  // 将文本框内容替换为加密后的字符
 }
 </script>
