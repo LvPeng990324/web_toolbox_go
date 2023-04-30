@@ -28,4 +28,9 @@ def ask_chatgpt(api_key, ask_content):
       ]
     )
 
-    return res
+    try:
+        answer = res.get('choices')[0].get('message').get('content')
+    except:
+        answer = '[出错了，请重试]'
+    
+    return answer

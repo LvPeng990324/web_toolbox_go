@@ -48,10 +48,7 @@ function ask() {
       ask_content: ask_content,
     },
     success: function (res) {
-      let raw_res = res.res;
-      let json_res = JSON.parse(raw_res);
-      let answer = json_res.choices[0].message.content;
-      $('#id_answer_textarea').val(answer);
+      $('#id_answer_textarea').val(res.answer);
       
       // 按钮恢复
       button_attr.prop('disabled', '');

@@ -102,7 +102,7 @@ func main() {
 		log.Printf("chatgpt, ask: " + ask_content + " answer: " + body_str)
 
 		c.JSON(200, gin.H{
-			"res": body_str,
+			"answer": body_str,
 		})
 	})
 
