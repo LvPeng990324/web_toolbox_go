@@ -37,6 +37,9 @@ function ask() {
   button_attr.prop('disabled', 'disabled');
   button_attr.text('等待结果...');
 
+  // 设置超时定时器
+  let ask_timeout_timer = setTimeout(ask_timeout, 10000);
+
   let ask_content = $('#id_ask_textarea').val();
   $.ajax({
     type: "POST",
@@ -48,13 +51,24 @@ function ask() {
       ask_content: ask_content,
     },
     success: function (res) {
-      $('#id_answer_textarea').val(res.answer);
+      $('#id_answer_textarea').val(JSON.parse(res.answer));
       
       // 按钮恢复
       button_attr.prop('disabled', '');
       button_attr.text('问 >');
+      // 清理超时定时器
+      clearTimeout(ask_timeout_timer);
     }
   })
+}
+// 超时重置
+function ask_timeout() {
+  // 按钮恢复
+  let button_attr = $('#id_ask_button');
+  button_attr.prop('disabled', '');
+  button_attr.text('问 >');
+  // 弹框提示
+  fire_toast('error', '响应超时，请重试');
 }
 
 // 获取req_token
