@@ -106,6 +106,8 @@ function copy_text(text) {
   document.execCommand('copy');  // 执行浏览器复制命令
   o_input.className = 'o_input'
   o_input.style.display = 'none';
+  // 弹框提示
+  fire_toast('success', '已复制');
 }
 
 // 填充当前时间，每秒执行
