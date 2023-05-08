@@ -1,0 +1,99 @@
+{{ define "markdown_edit_active" }}active{{ end }}
+{{ define "title_name" }}markdown编辑{{ end }}
+{{ define "page_name" }}markdown编辑{{ end }}
+{{ define "page_header_right" }}
+<button class="btn btn-block btn-primary" onclick="switch_layout();">切换布局</button>
+{{ end }}
+
+{{ define "css_content" }}
+<!-- <link href="https://cdn.bootcdn.net/ajax/libs/simplemde/1.11.2/simplemde.min.css" rel="stylesheet"> -->
+{{ end }}
+
+{{ define "main_content" }}
+<div class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div id="id_edit_dev" class="col-sm-6">
+        <div class="form-group">
+          <textarea class="form-control" id="markdown" onkeyup="render();" rows="20" placeholder="编辑区"></textarea>
+        </div>
+      </div>
+      <div id="id_preview_dev" class="col-sm-6">
+        <div class="form-group">
+          <div id="preview"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{ end }}
+
+{{ define "js_content" }}
+<script src="https://cdn.bootcdn.net/ajax/libs/marked/4.3.0/marked.min.js"></script>
+<script>
+  // 全局变量区
+  let layout = window.localStorage.getItem("markdown_edit_layout") || "horizontal";  // 获取页面布局，默认水平布局
+
+  // 渲染markdown
+  function render() {
+    let markdown = document.getElementById("markdown").value;
+    let html = marked.parse(markdown);
+    document.getElementById("preview").innerHTML = html;
+  }
+
+  // 切换页面布局
+  function switch_layout() {
+    if (layout == 'horizontal') {  // 如果是水平，就改为竖直
+      // 设定标记
+      layout = "vertical";
+      // 提示
+      fire_toast('success', '已切换为竖直布局');
+    } else {  // 否则就是竖直，改为水平
+      // 设定标记
+      layout = "horizontal";
+      // 提示
+      fire_toast('success', '已切换为水平布局');
+    }
+    // 刷新页面布局
+    refresh_layout();
+    // 更新缓存记录
+    window.localStorage.setItem("markdown_edit_layout", layout);
+  }
+
+  // 刷新页面布局
+  function refresh_layout() {
+    if (layout == 'horizontal') {
+      // 改变页面布局为水平
+      $('#id_edit_dev').prop("class", "col-sm-6");
+      $('#id_preview_dev').prop("class", "col-sm-6");
+    } else {
+      // 改变页面布局为竖直
+      $('#id_edit_dev').prop("class", "col-sm-12");
+      $('#id_preview_dev').prop("class", "col-sm-12");
+    }
+  }
+  refresh_layout();
+
+  // 定时保存
+  setInterval(function () {
+    let markdown = document.getElementById("markdown").value;
+    window.localStorage.setItem("markdown_edit_markdown", markdown);
+  }, 5000);  // 5s保存一次
+
+  // 初始化页面
+  function init_page() {
+    // 刷新页面布局
+    refresh_layout();
+
+    // 预填充缓存的内容
+    let markdown = window.localStorage.getItem("markdown_edit_markdown");
+    if (markdown) {  // 有缓存内容才进行操作
+      $('#markdown').val(markdown);
+      render();
+    }
+  }
+  init_page();
+</script>
+{{ end }}

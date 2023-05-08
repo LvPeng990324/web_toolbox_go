@@ -23,6 +23,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("timestamp_covert", "templates/base.html", "templates/timestamp_covert.html")
 	r.AddFromFiles("chatgpt", "templates/base.html", "templates/chatgpt.html")
 	r.AddFromFiles("port_scan", "templates/base.html", "templates/port_scan.html")
+	r.AddFromFiles("markdown_edit", "templates/base.html", "templates/markdown_edit.html")
 	return r
 }
 
@@ -110,6 +111,11 @@ func main() {
 	// 端口扫描
 	router.GET("/port-scan", func(c *gin.Context) {
 		c.HTML(200, "port_scan", gin.H{})
+	})
+
+	// markdown编辑
+	router.GET("/markdown-edit", func(c *gin.Context) {
+		c.HTML(200, "markdown_edit", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {

@@ -138,6 +138,13 @@
             </a>
           </li>
 
+          <li class="nav-item">
+            <a href="/markdown-edit" class='nav-link {{ block "markdown_edit_active" .}}{{ end }}'>
+              <i class="nav-icon fa-brands fa-markdown"></i>
+              <p>markdown编辑</p>
+            </a>
+          </li>
+
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -154,6 +161,9 @@
           <div class="col-sm-6">
             <h1 class="m-0">{{ block "page_name" .}}{{ end }}</h1>
           </div><!-- /.col -->
+          <div class="col-sm-6">
+            {{ block "page_header_right" .}}{{ end }}
+          </div>
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
     </div>
