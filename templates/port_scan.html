@@ -1,0 +1,86 @@
+{{ define "port_scan_active" }}active{{ end }}
+{{ define "title_name" }}端口扫描{{ end }}
+{{ define "page_name" }}端口扫描{{ end }}
+
+{{ define "main_content" }}
+<div class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-10">
+        <div class="form-group">
+          <input type="text" class="form-control" name="host" id="id_host_input" placeholder="域名或IP">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <input type="text" class="form-control" name="port" id="id_port_input" placeholder="端口">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <button class="btn btn-block btn-primary" onclick="scan();fire_toast('success', '开始扫描');">扫描</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="form-group">
+          <textarea class="form-control" name="result" id="id_result_textarea" rows="10"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+  // // 扫描
+  function scan() {
+    let host = $('#id_host_input').val();
+    let port = $('#id_port_input').val();
+
+    // 检查是否开放
+    scanPort(host, port);
+  }
+
+  // 检查给定的端口是否开放，并执行相应的方法
+  // 这里使用的方法是通过模拟img请求来测试是否开放
+  function scanPort(host, port) {
+    let img = new Image();
+    img.onerror = function () {
+      if (!img) {
+        return;
+      }
+      img = undefined;
+      check_open_handler(host, port);
+    };
+
+    img.onload = img.onerror;
+    img.src = "http://" + host + ":" + port;
+
+    setTimeout(function () {
+      if (!img) {
+        return;
+      }
+      img = undefined;
+      check_close_handler(host, port);
+    }, 1000);
+  };
+
+  // 对于检查是关闭的处理方法
+  function check_close_handler(host, port) {
+    $('#id_result_textarea').val(`${host}:${port} 关闭`);
+  }
+
+  // 对于检查是开放的处理方法
+  function check_open_handler(host, port) {
+    $('#id_result_textarea').val(`${host}:${port} 开放`);
+  }
+</script>
+{{ end }}

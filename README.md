@@ -13,6 +13,7 @@
 - JSON格式化
 - 时间戳转换
 - ChatGPT
+- 端口扫描
 
 ## 其他说明：
 - ChatGPT模块需要再部署一份外网的server来做接口服务，本项目使用的是官方python的SDK

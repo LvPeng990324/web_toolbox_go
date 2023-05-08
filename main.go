@@ -22,6 +22,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("json_format", "templates/base.html", "templates/json_format.html")
 	r.AddFromFiles("timestamp_covert", "templates/base.html", "templates/timestamp_covert.html")
 	r.AddFromFiles("chatgpt", "templates/base.html", "templates/chatgpt.html")
+	r.AddFromFiles("port_scan", "templates/base.html", "templates/port_scan.html")
 	return r
 }
 
@@ -104,6 +105,11 @@ func main() {
 		c.JSON(200, gin.H{
 			"answer": body_str,
 		})
+	})
+
+	// 端口扫描
+	router.GET("/port-scan", func(c *gin.Context) {
+		c.HTML(200, "port_scan", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {
