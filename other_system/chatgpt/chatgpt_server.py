@@ -11,7 +11,7 @@ app = FastAPI()
 
 @app.post("/ask/")
 async def ask(api_key: str = Form(), ask_content: str = Form()):
-    res = ask_chatgpt(ask_params.api_key, ask_params.ask_content)
+    res = ask_chatgpt(api_key, ask_content)
     return res
 
 
