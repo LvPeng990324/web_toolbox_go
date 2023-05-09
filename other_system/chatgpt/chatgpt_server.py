@@ -2,6 +2,7 @@ import os
 import openai
 
 from fastapi import FastAPI
+from fastapi import Form
 from pydantic import BaseModel
 
 
