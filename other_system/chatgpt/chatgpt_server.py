@@ -5,16 +5,11 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 
-class AskParams(BaseModel):
-    api_key: str
-    ask_content: str
-
-
 app = FastAPI()
 
 
 @app.post("/ask/")
-async def ask(ask_params: AskParams):
+async def ask(api_key: str = Form(), ask_content: str = Form()):
     res = ask_chatgpt(ask_params.api_key, ask_params.ask_content)
     return res
 

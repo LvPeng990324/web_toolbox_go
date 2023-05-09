@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -88,14 +89,26 @@ func main() {
 		}
 
 		ask_content := c.PostForm("ask_content")
-		url := chatgpt_server_url
-		payload := strings.NewReader("{\"api_key\": \"" + chatgpt_api_key + "\", \"ask_content\": \"" + ask_content + "\"}")
-		req, _ := http.NewRequest("POST", url, payload)
-		req.Header.Add("Content-Type", "application/json")
-		response, err := http.DefaultClient.Do(req)
+		target_url := chatgpt_server_url
+
+		// 拼接参数
+		payload := url.Values{}
+		payload.Set("api_key", chatgpt_api_key)
+		payload.Set("ask_content", ask_content)
+
+		// 发送请求
+		request, err := http.NewRequest(http.MethodPost, target_url, strings.NewReader(payload.Encode()))
 		if err != nil {
 			log.Fatal(err)
 		}
+		request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
+		response, err := http.DefaultClient.Do(request)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		defer response.Body.Close()
+
 		// 解析body
 		body, _ := ioutil.ReadAll(response.Body)
 		body_str := string(body)
