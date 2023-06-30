@@ -25,6 +25,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("chatgpt", "templates/base.html", "templates/chatgpt.html")
 	r.AddFromFiles("port_scan", "templates/base.html", "templates/port_scan.html")
 	r.AddFromFiles("markdown_edit", "templates/base.html", "templates/markdown_edit.html")
+	r.AddFromFiles("crontab_test", "templates/base.html", "templates/crontab_test.html")
 	return r
 }
 
@@ -129,6 +130,11 @@ func main() {
 	// markdown编辑
 	router.GET("/markdown-edit", func(c *gin.Context) {
 		c.HTML(200, "markdown_edit", gin.H{})
+	})
+
+	// crontab测试
+	router.GET("/crontab-test", func(c *gin.Context) {
+		c.HTML(200, "crontab_test", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {

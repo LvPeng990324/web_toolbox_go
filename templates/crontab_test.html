@@ -1,0 +1,75 @@
+{{ define "crontab_test_active" }}active{{ end }}
+{{ define "title_name" }}crontab测试{{ end }}
+{{ define "page_name" }}crontab测试{{ end }}
+
+{{ define "main_content" }}
+<div class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-10">
+        <div class="form-group">
+          <input type="text" class="form-control" name="crontab" id="id_crontab" value="0 0 12 * *" placeholder="crontab表达式">
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <div class="form-group">
+          <button class="btn btn-block btn-primary" onclick="get_result()">扫描</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div id="id_result_div" class="form-group">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+  function get_result() {
+    let crontab = $('#id_crontab').val();
+
+    // 去除首位空格
+    crontab = crontab.replace(/(^\s*)|(\s*$)/g, "");
+
+    // 先把结果清空
+    $('#id_result_div').empty();
+
+    let results = get_cron_times(crontab);
+    $('#id_result_div').append(results);
+  }
+
+  // 获取crontab表达式下次执行时间
+  function get_cron_times(crontab) {
+    const form = new FormData();
+    form.append("crontxt", crontab + ' ?');  // 接口要求结尾得带个问号
+
+    const settings = {
+      "async": false,
+      "crossDomain": true,
+      "url": "https://api.bejson.com/btools/othertools/cron/",
+      "method": "POST",
+      "headers": {},
+      "processData": false,
+      "contentType": false,
+      "mimeType": "multipart/form-data",
+      "data": form
+    };
+
+    let res;
+    $.ajax(settings).done(function (response) {
+      data = JSON.parse(response);
+      res = data.obj;
+    });
+
+    return res;
+  }
+
+</script>
+{{ end }}
