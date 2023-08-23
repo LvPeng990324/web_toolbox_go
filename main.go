@@ -26,6 +26,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("port_scan", "templates/base.html", "templates/port_scan.html")
 	r.AddFromFiles("markdown_edit", "templates/base.html", "templates/markdown_edit.html")
 	r.AddFromFiles("crontab_test", "templates/base.html", "templates/crontab_test.html")
+	r.AddFromFiles("fast_copy", "templates/base.html", "templates/fast_copy.html")
 	return r
 }
 
@@ -135,6 +136,11 @@ func main() {
 	// crontab测试
 	router.GET("/crontab-test", func(c *gin.Context) {
 		c.HTML(200, "crontab_test", gin.H{})
+	})
+
+	// 快捷粘贴板
+	router.GET("/fast-copy", func(c *gin.Context) {
+		c.HTML(200, "fast_copy", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {

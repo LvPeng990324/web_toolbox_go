@@ -1,0 +1,180 @@
+{{ define "fast_copy_active" }}active{{ end }}
+{{ define "title_name" }}快捷粘贴板{{ end }}
+{{ define "page_name" }}快捷粘贴板{{ end }}
+
+{{ define "main_content" }}
+  <div class="content">
+    <div class="container-fluid">
+
+      <div>
+        <div class="card-body table-responsive p-0" style="height: auto;">
+          <table class="table table-head-fixed text-nowrap">
+            <thead>
+              <tr>
+                <th>备注</th>
+                <th>内容</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="id_data_list_show_tbody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="form-group">
+            <button type="button" class="btn btn-block btn-success btn-lg" data-toggle="modal" data-target="#id_edit_model" onclick="on_add_btn_click();">新增</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="id_edit_model">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="id_eidt_model_title" class="modal-title">这是编辑的标题</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <input id="id_input_id" value="" hidden>  <!-- 用于存放id，id就是数组下标，空的话就会在总数据列表后push一个新增，有指定的就是覆盖修改 -->
+          <div class="form-group">
+            <label for="id_input_remark">备注</label>
+            <input id="id_input_remark" type="text" class="form-control" placeholder="备注">
+          </div>
+          <div class="form-group">
+            <label for="id_input_content">内容</label>
+            <input id="id_input_content" type="text" class="form-control" placeholder="内容">
+          </div>
+
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+          <button type="button" class="btn btn-primary" onclick="on_edit_confirm_btn_click();">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+var data_list = [  // 总数据列表
+  {
+    remark: '这是备注',
+    content: '这是内容',
+  },
+];
+
+// 保存数据到本地
+function save_data_list() {
+  localStorage.setItem('fast_copy_data_list', JSON.stringify(data_list));
+}
+
+// 从本地读取数据
+function load_data_list() {
+  let data_list_str = localStorage.getItem('fast_copy_data_list');
+  if (data_list_str != null) {
+    data_list = JSON.parse(data_list_str);
+  }
+}
+load_data_list();
+
+// 刷新数据列表展示
+function refresh_data_list_show() {
+  var html = '';
+  for (var i = 0; i < data_list.length; i++) {
+    var item = data_list[i];
+
+    html += `
+    <tr>
+      <td>${item.remark}</td>
+      <td>${item.content}</td>
+      <td>
+        <button class="btn btn-default btn-sm" onclick="on_copy_btn_cilck(${i});">复制</button>
+        <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#id_edit_model" onclick="on_change_btn_cilck(${i});">修改</button>
+        <button class="btn btn-danger btn-sm" onclick="on_delete_btn_click(${i});">删除</button>
+      </td>
+    </tr>
+    `
+  }
+  $('#id_data_list_show_tbody').html(html);
+}
+// 进页面就刷新一次
+refresh_data_list_show();
+
+// 新增按钮触发方法
+function on_add_btn_click() {
+  $('#id_eidt_model_title').text('新增');
+  $('#id_input_remark').val('');
+  $('#id_input_content').val('');
+}
+
+// 修改按钮触发方法
+function on_change_btn_cilck(id) {
+  $('#id_eidt_model_title').text('修改');
+  $('#id_input_id').val(id);
+  $('#id_input_remark').val(data_list[id].remark);
+  $('#id_input_content').val(data_list[id].content);
+}
+
+// 删除按钮触发方法
+function on_delete_btn_click(id) {
+  data_list.splice(id, 1);
+  save_data_list();
+  refresh_data_list_show();
+}
+
+// 复制按钮触发方法
+function on_copy_btn_cilck(id) {
+  copy_text(data_list[id].content);
+}
+
+// 编辑确定按钮触发方法
+function on_edit_confirm_btn_click() {
+  let id = $('#id_input_id').val();
+  let remark = $('#id_input_remark').val();
+  let content = $('#id_input_content').val();
+
+  // 判断id，如果没有id的话就改为data_list的长度，就是新增
+  if (id == '') {
+    id = data_list.length;
+  }
+
+  // 应用
+  data_list[id] = {
+    remark: remark,
+    content: content,
+  };
+
+  // 保存数据到本地
+  save_data_list();
+
+  // 刷新数据列表展示
+  refresh_data_list_show();
+
+  // 关闭模态框
+  $('#id_edit_model').modal('hide');
+}
+
+// 复制文本
+function copy_text(text) {
+  let o_input = document.createElement('input');
+  o_input.value = text;
+  document.body.appendChild(o_input);
+  o_input.select();  // 选择对象
+  document.execCommand('copy');  // 执行浏览器复制命令
+  o_input.className = 'o_input'
+  o_input.style.display = 'none';
+  // 弹框提示
+  fire_toast('success', '已复制');
+}
+</script>
+{{ end }}
