@@ -1,0 +1,200 @@
+{{ define "websocket_test_active" }}active{{ end }}
+{{ define "title_name" }}WebSocket测试{{ end }}
+{{ define "page_name" }}WebSocket测试{{ end }}
+
+{{ define "main_content" }}
+<div class="content">
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-sm-5">
+
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <button id="id_connect_state_button" type="button" class="btn btn-danger">未连接</button>
+          </div>
+          <input id="id_host_input" type="text" class="form-control rounded-0" value="ws://127.0.0.1:5001/ws">
+          <div class="input-group-append">
+            <button id="id_connect_button" type="button" class="btn btn-success" onclick="connect_server();">连接服务</button>
+            <button id="id_disconnect_button" type="button" class="btn btn-danger" onclick="disconnect();" hidden>关闭连接</button>
+          </div>
+        </div>
+
+        <hr>
+
+        <div class="form-group">
+          <textarea id="id_send_msg_textarea" class="form-control" rows="5"></textarea>
+          <button id="id_send_button" type="button" class="btn btn-info btn-block" onclick="send_msg();" disabled>先连接服务再发送</button>
+        </div>
+
+      </div>
+
+      <!-- 这里加个空白占位，不然两块挤在一起不好看 -->
+      <div class="col-sm-1"></div>
+
+      <div class="col-sm-6">
+        <div class="form-group">
+          <h3>
+            消息记录
+            <button type="button" class="btn btn-default" onclick="clear_msg_box();">清空记录</button>
+          </h3>
+
+          <div id="id_msg_box_div">
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{{ end }}
+
+{{ define "js_content" }}
+<script>
+/**
+ * ws连接对象
+ * WebSocket
+*/
+var conn;
+
+// 检查是否已连接
+function check_connected () {
+  return conn?.readyState == WebSocket.OPEN;
+}
+
+// 连接服务器
+function connect_server () {
+  // 检查浏览器ws兼容性
+  if (!window["WebSocket"]) {
+    fire_toast('error', '你的浏览器不支持WebSocket');
+    return;
+  }
+  // 检查是否已经连接了
+  if (check_connected()) {
+    fire_toast('warning', '已经有连接了，不要重复连接');
+    return;
+  }
+
+  let host = $('#id_host_input').val();
+
+  conn = new WebSocket(host);
+  // 连接成功回调
+  conn.onopen = function (e) {
+    refresh_page_connect_state();
+    fire_toast('success', '连接成功');
+  }
+  // 连接断开回调
+  conn.onclose = function (e) {
+    refresh_page_connect_state();
+    fire_toast('success', '断开成功');
+  }
+  // 收到消息回调
+  conn.onmessage = function (e) {
+    // 加到消息框里
+    add_msg_box('receive', e.data);
+  }
+}
+
+// 关闭连接
+function disconnect () {
+  // 判断连接可用性
+  if (!check_connected()) {
+    fire_toast('warning', '连接已经断开了');
+    return;
+  }
+
+  // 断开连接
+  conn.close();
+
+  refresh_page_connect_state();
+}
+
+// 发送消息
+function send_msg () {
+  // 检查是否已连接
+  if (!check_connected()) {
+    fire_toast('error', '未连接，需要先连接');
+    return;
+  }
+
+  let msg = $('#id_send_msg_textarea').val();
+  conn.send(msg);
+
+  // 加到消息框里
+  add_msg_box('send', msg);
+}
+
+// 刷新页面显示状态
+function refresh_page_connect_state() {
+  // 获取页面组件
+  let connect_state_button_attr = $('#id_connect_state_button');
+  let connect_button_attr = $('#id_connect_button');
+  let disconnect_button_attr = $('#id_disconnect_button');
+  let send_button_attr = $('#id_send_button');
+
+  if (check_connected()) {
+    // 已连接
+    // 改变状态按钮
+    connect_state_button_attr.prop('class', 'btn btn-success');
+    connect_state_button_attr.html('已连接');
+    // 隐藏连接按钮
+    connect_button_attr.prop('hidden', 'hidden');
+    // 显示关闭按钮
+    disconnect_button_attr.prop('hidden', '');
+    // 改变发送按钮
+    send_button_attr.prop('disabled', '');
+    send_button_attr.html('发送');
+  } else {
+    // 未连接
+    // 改变状态按钮
+    connect_state_button_attr.prop('class', 'btn btn-danger');
+    connect_state_button_attr.html('未连接');
+    // 显示连接按钮
+    connect_button_attr.prop('hidden', '');
+    // 隐藏关闭按钮
+    disconnect_button_attr.prop('hidden', 'hidden');
+    // 改变发送按钮
+    send_button_attr.prop('disabled', 'disabled');
+    send_button_attr.html('先连接服务再发送');
+  }
+}
+
+// 往消息记录里塞内容
+function add_msg_box (msg_type, msg) {
+  // 判断消息类型
+  let font_color;
+  let title;
+  if (msg_type == 'send') {  // 发送的消息
+    font_color = 'green';
+    title = '发送消息';
+  } else {  // 接收的消息
+    font_color = 'rgb(0, 183, 255)';
+    title = '收到消息';
+  }
+
+  // 拼接时间
+  let now = new Date();
+  let time_str = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+
+  // 获取消息盒子对象
+  let msg_box_attr = $('#id_msg_box_div');
+
+  // 加
+  msg_box_attr.append(`
+  <div>
+    <strong>
+      <span style="color: ${font_color};">${title}</span>
+      ${time_str}
+    </strong>
+    <p>${msg}</p>
+  </div>
+  `);
+}
+
+// 清空消息记录
+function clear_msg_box () {
+  $('#id_msg_box_div').html('');
+}
+</script>
+{{ end }}

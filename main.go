@@ -27,6 +27,7 @@ func createMyRender() multitemplate.Renderer {
 	r.AddFromFiles("markdown_edit", "templates/base.html", "templates/markdown_edit.html")
 	r.AddFromFiles("crontab_test", "templates/base.html", "templates/crontab_test.html")
 	r.AddFromFiles("fast_copy", "templates/base.html", "templates/fast_copy.html")
+	r.AddFromFiles("websocket_test", "templates/base.html", "templates/websocket_test.html")
 	return r
 }
 
@@ -141,6 +142,11 @@ func main() {
 	// 快捷粘贴板
 	router.GET("/fast-copy", func(c *gin.Context) {
 		c.HTML(200, "fast_copy", gin.H{})
+	})
+
+	// WebSocket测试
+	router.GET("/websocket-test", func(c *gin.Context) {
+		c.HTML(200, "websocket_test", gin.H{})
 	})
 
 	if err := router.Run(":" + port); err != nil {

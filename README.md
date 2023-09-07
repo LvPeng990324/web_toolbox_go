@@ -17,6 +17,7 @@
 - markdown编辑
 - crontab测试
 - 快捷粘贴板
+- WebSocket测试
 
 ## 其他说明：
 - ChatGPT模块需要再部署一份外网的server来做接口服务，本项目使用的是官方python的SDK
