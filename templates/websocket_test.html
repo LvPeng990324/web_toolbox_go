@@ -94,6 +94,9 @@ function connect_server () {
     // 加到消息框里
     add_msg_box('receive', e.data);
   }
+
+  // 记录host内容，下次打开自动填充
+  save_data();
 }
 
 // 关闭连接
@@ -196,5 +199,31 @@ function add_msg_box (msg_type, msg) {
 function clear_msg_box () {
   $('#id_msg_box_div').html('');
 }
+
+// 保存页面数据
+function save_data () {
+  let host_str = $('#id_host_input').val();
+
+  let data = {
+    'host_str': host_str,
+  };
+  
+  console.log('save', data)
+
+  window.localStorage.setItem('websocket_test_data', JSON.stringify(data));
+}
+
+// 加载页面数据
+function load_data () {
+  let data = window.localStorage.getItem('websocket_test_data');
+  
+  try {
+    data = JSON.parse(data);
+    $('#id_host_input').val(data['host_str']);
+  } catch (error) {  // 出错了，直接删了
+    window.localStorage.removeItem('websocket_test_data');
+  }
+}
+load_data();
 </script>
 {{ end }}
