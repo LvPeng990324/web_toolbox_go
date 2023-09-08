@@ -207,8 +207,6 @@ function save_data () {
   let data = {
     'host_str': host_str,
   };
-  
-  console.log('save', data)
 
   window.localStorage.setItem('websocket_test_data', JSON.stringify(data));
 }
